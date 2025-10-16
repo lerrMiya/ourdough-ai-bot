@@ -2,6 +2,8 @@ import pandas as pd
 import joblib
 import requests
 import time
+from flask import Flask
+import threading
 
 # ====== CONFIGURATION ======
 GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1rpLN-HQcbzrq2kkumDnHU7OhH0LUSRJx5AtRcm5coFs/export?format=csv"
@@ -25,6 +27,17 @@ def main():
     print("🤖 Loading AI model...")
     model = joblib.load(MODEL_PATH)
     last_feed_status = None  # To avoid duplicate notifications
+
+    app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "🤖 Sourdough AI Bot is running!"
+
+def run_web():
+    app.run(host="0.0.0.0", port=10000)
+
+threading.Thread(target=run_web, daemon=True).start()
 
     while True:
         try:
@@ -61,3 +74,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
